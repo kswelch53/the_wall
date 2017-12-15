@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'app_one/css/style.css' %}" media="screen" title="no title">
+    <title>Index page</title>
+  </head>
+
+  <body>
+    <div class="wrapper">
+
+      <div class="header">
+        <!-- this project doesn't have login/registration, so user.first_name isn't in session and therefore won't appear at top of home page  -->
+        <!-- the 2 test users were entered into the db via shell commands -->
+        <!-- logoff button nonfunctional here -->
+        <h1 class="ele_line">CodingDojo Wall</h1>Welcome, {{ user.first_name }}<a href={% url 'app_one:logoff' %}>log off</a>
+      </div>
+
+      <h2>Post a message</h2>
+
+      <form class="messagebox" action="{% url 'app_one:post_message'%}" method="POST" id="send_message">
+        {% csrf_token %}
+        <textarea name ="message" rows="5" cols="80" value=""></textarea>
+        <button type="submit" form="send_message" value="">Post a message</button>
+      </form>
+
+      {% for user in users %}
+
+  <!-- 'messages' in user.messages refers to the related name in the Message model-->
+        {% for message in user.messages.all %}
+
+          <h5>{{ user.first_name }} {{ user.last_name }} {{ message.created_at }}</h5>
+          <h5>{{ message.message }}</h5>
+
+
+  <!-- displaying Comment objects -->
+          <div class="comments">
+            {% for comment in message.comments.all %}
+              <p>{{ comment.user_id.first_name }} {{ comment.user_id.last_name }} {{ comment.created_at }}</p>
+              <p>{{ comment.comment }}</p>
+            {% endfor %} <!-- end of comment loop -->
+          </div>
+
+      <!-- comments here -->
+      <!-- hidden field for message id? -->
+          <form class="commentbox" action="{% url 'app_one:post_comment' ms_id=message.id %}" method="POST" id="send_comment">
+            {% csrf_token %}
+            <textarea name="comment" rows="4" cols="60" value="{{ message.id }}"></textarea>
+            <button type="submit" form="send_comment" value="">Post a comment</button>
+          </form>
+
+        {% endfor %} <!-- end of messages loop -->
+
+      {% endfor %} <!-- end of user loop -->
+
+    </div> <!-- wrapper end div -->
+
+  </body>
+</html>

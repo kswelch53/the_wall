@@ -1,0 +1,7 @@
+
+
+<form class="commentbox" action="{% url 'app_one:post_comment' %}" method="POST" id="send_comment">
+  {% csrf_token %}
+  <textarea name="comment" rows="4" cols="60" value={{ message.id }}>{{ message.id }}</textarea>
+  <button type="submit" form="send_comment" value="">Post a comment</button>
+</form>
